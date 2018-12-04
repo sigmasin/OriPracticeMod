@@ -16,6 +16,7 @@ public static class PracticeManager
 		PracticeManager.EndReadable = "left";
 		PracticeManager.MessageInQueue = 0;
 		PracticeManager.Message = "";
+		PracticeManager.LastTick = DateTime.Now.Ticks;
 		PracticeManager.ResetValues();
 		PracticeManager.ParseSessionFile();
 	}
@@ -25,12 +26,16 @@ public static class PracticeManager
 		PracticeManager.FrameCount = Int32.MaxValue;
 		PracticeManager.FrameCountSession = Int32.MaxValue;
 		PracticeManager.FrameCountAll = Int32.MaxValue;
+		PracticeManager.ExtraTicks = 0L;
+		PracticeManager.ExtraFrames = 0;
+		PracticeManager.LagFrames = 0;
+		PracticeManager.DroppedFrames = 0;
+		PracticeManager.MaxDelta = 0L;
 		PracticeManager.Running = false;
 		PracticeManager.Countdown = -1;
 		if(Characters.Sein) 
 		{
 			Characters.Sein.Mortality.DamageReciever.IsImmortal = false;
-			GameController.Instance.LockInput = false;
 		}
 	}
 
@@ -72,6 +77,9 @@ public static class PracticeManager
 	public static void Update()
 	{
 		PracticeManager.UpdateMessages();
+		long currentTicks = DateTime.Now.Ticks;
+		long tickDelta = currentTicks - PracticeManager.LastTick - 166667L;
+		PracticeManager.LastTick = currentTicks;
 		if (PracticeManager.Countdown >= 0)
 		{
 			PracticeManager.Countdown--;
@@ -83,6 +91,7 @@ public static class PracticeManager
 			{
 				PracticeManager.Start();
 			}
+
 		}
 		if (PracticeManager.Running)
 		{
@@ -97,6 +106,22 @@ public static class PracticeManager
 						}
 					}
 			}
+			PracticeManager.ExtraTicks -= tickDelta;
+			if (PracticeManager.ExtraTicks > 166667L)
+			{
+				PracticeManager.ExtraFrames += 1;
+				PracticeManager.ExtraTicks -= 166667L;
+			}
+			if (PracticeManager.ExtraTicks < -166667L)
+			{
+				PracticeManager.LagFrames += 1;
+				PracticeManager.ExtraTicks += 166667L;
+			}
+			if (tickDelta > 166667L)
+			{
+				PracticeManager.DroppedFrames += (int)(tickDelta / 166667L);
+			}
+			PracticeManager.MaxDelta = Math.Max(PracticeManager.MaxDelta, tickDelta);
 			PracticeManager.FrameCount++;
 			PracticeManager.CheckEnd();
 		}
@@ -246,11 +271,16 @@ public static class PracticeManager
 		PracticeManager.ShowMessage("$GO$", 1f);
 		PracticeManager.Running = true;
 		PracticeManager.FrameCount = -1;
+		PracticeManager.ExtraTicks = 0L;
+		PracticeManager.ExtraFrames = 0;
+		PracticeManager.LagFrames = 0;
+		PracticeManager.MaxDelta = 0L;
 	}
 
 	public static void End()
 	{
 		PracticeManager.Running = false;
+		PracticeManager.FrameCount += PracticeManager.LagFrames - PracticeManager.ExtraFrames;
 		if(PracticeManager.FrameCount < PracticeManager.FrameCountSession)
 		{
 			PracticeManager.FrameCountSession = PracticeManager.FrameCount;
@@ -347,18 +377,22 @@ public static class PracticeManager
 	{
 		UI.SeinUI.ShowUI = true;
 		SeinUI.DebugHideUI = false;
-		PracticeManager.ShowMessage("Start Position: " + PracticeManager.StartPosition.ToString() + "\n" +
-										"End Position: " + PracticeManager.EndPosition.ToString() + " " + PracticeManager.EndType.ToString() + "\n" +
-										"Current Position: " + new Vector2(Characters.Sein.Position.x, Characters.Sein.Position.y).ToString());
+		PracticeManager.ShowMessage("Start Position: " + PracticeManager.StartPosition.ToString() +
+									"\nEnd Position: " + PracticeManager.EndPosition.ToString() + " " + PracticeManager.EndType.ToString() +
+									"\nCurrent Position: " + new Vector2(Characters.Sein.Position.x, Characters.Sein.Position.y).ToString());
 	}
 
 	public static void ShowFrameInfo()
 	{
 		UI.SeinUI.ShowUI = true;
 		SeinUI.DebugHideUI = false;
-		PracticeManager.ShowMessage("Frames: " + PracticeManager.FrameCount.ToString() + "\n" +
-										"Session Best: " + PracticeManager.FrameCountSession.ToString() + "\n" +
-										"Overall Best: " + PracticeManager.FrameCountAll.ToString());
+		PracticeManager.ShowMessage("Frames: " + PracticeManager.FrameCount.ToString() +
+									"    Session Best: " + PracticeManager.FrameCountSession.ToString() +
+									"    Overall: " + PracticeManager.FrameCountAll.ToString() + 
+									"\nExtra: " + PracticeManager.ExtraFrames.ToString() +
+									"    Lag: " + PracticeManager.LagFrames.ToString() +
+									"    Dropped: " + PracticeManager.DroppedFrames.ToString() +
+									"    Max Delta: " + (((float)PracticeManager.MaxDelta + 166667L) / 10000f).ToString() + "ms");
 
 	}
 
@@ -387,4 +421,16 @@ public static class PracticeManager
 	public static int FrameCountAll;
 
 	public static bool Running;
+
+	public static long LastTick;
+
+	public static long ExtraTicks;
+
+	public static int LagFrames;
+
+	public static int ExtraFrames;
+
+	public static int DroppedFrames;
+
+	public static long MaxDelta;
 }

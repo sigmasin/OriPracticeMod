@@ -33,7 +33,12 @@ The full set of actions that gets taken upon pressing Alt+R:
 -Frame counting begins
 -Any held inputs are forcibly released and repressed on the first frame of counting, thus you can buffer a dash, jump, bash, etc. at the beginning of the segment for more accurate timing. This feature has some quirks, but is functional -- for example, to buffer a cdash, you must press dash then press charge; pressing them together just gives a regular dash.
 
-UI will be toggled on upon reaching the end automatically to display the results.
+UI will be toggled on upon reaching the end automatically to display the results. Results include statistics about game performance during the segment:
+Frames - how many times the update loop triggered during the segment plus the number of lag frames minus the number of extra frames
+Extra - How many extra frames were rendered above 60FPS. With vsync off, these don't give extra speed as physics are time-based, not frame-based.
+Lag - How many frames were skipped due to a series of frames slower than 16.6667ms. With vsync off, lag frames usually have no impact on overall speed, though high numbers of them (more than a single-digit of lag frames within 10s) do indicate poor performance.
+Dropped - How many frames were dropped during the segment. Dropped frames are counted when updates are occuring more than 33.3333ms apart. Dropped frames cause real time loss.
+Max Delta - The longest time between cycles of the update loop. Good performance will have this value somewhere between 16.6667ms and 33.3333ms. Times greater than 50ms indicate that multiple frames are being dropped at once.
 
 Upon setting a start point, end point, or beating the overall best for your start point/end point, PracticeSession.txt will be written. You could use this to share the same start/end points, but note that you'll also need to either send your slot 50 save over, or create a save in slot 50 in the area. Alt+R will set your position after loading, so just having the same skills and being in roughly the same place is good enough here.
 
