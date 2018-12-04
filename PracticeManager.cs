@@ -251,6 +251,7 @@ public static class PracticeManager
 		{
 			Characters.Sein.Position = PracticeManager.StartPosition;
 			Characters.Sein.Mortality.DamageReciever.IsImmortal = true;
+			UI.Cameras.Current.MoveToTargetCharacter(0f);
 		}
 		PracticeManager.ShowMessage("Ready...", 5f);
 		PracticeManager.Countdown = 60;
@@ -267,6 +268,7 @@ public static class PracticeManager
 		{
 			Characters.Sein.Position = PracticeManager.StartPosition;
 			Characters.Sein.Mortality.DamageReciever.IsImmortal = false;
+			UI.Cameras.Current.MoveToTargetCharacter(0f);
 		}
 		PracticeManager.ShowMessage("$GO$", 1f);
 		PracticeManager.Running = true;
