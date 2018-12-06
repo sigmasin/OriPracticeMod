@@ -14,10 +14,11 @@ Alt+Numpad7: Set end area (up-left)
 Alt+Numpad8: Set end area (up)
 Alt+Numpad9: Set end area (up-right)
 
-Alt+R: Start the run.
+Alt+R: Start the run
 Alt+L: Reload PracticeSession.txt
-Alt+I: Show current position, start point, end point, and end direction.
+Alt+I: Show current position, start point, end point, and end direction
 Alt+T: Replay last message
+Alt+E: Display bash and charge dash efficiency stats
 
 Notes:
 
@@ -44,11 +45,35 @@ Upon setting a start point, end point, or beating the overall best for your star
 
 Starting a new game will turn on UI and print a hint that indicates that this mod is active to prevent invalid runs as a result of the recompiled game.
 
+Efficiency stats display the following information for every bash and attempted stomp cancel during the last run:
+
+Bashes: bash count
+Excess: total frames bashes were held above 20
+Efficiency: (20 / average bash length) * 100%
+
+Stomp Cancels: number of charge dashes finished by an energy-refunding stomp
+Late: number of charge dashes followed by a stomp on frame 13-24
+Average: the average frame that a stomp cancel occurs on
+Efficiency: percentage of max distance that you get out of your stomp cancels (100% = all 12 frame cancels)
+
+Jump Cancels: number of jumps out of post-cdash stomps
+Early: number of jumps that occurred on the first frame of the stomp, dropping the jump (unless you're lucky)
+Excess: total number of frames wasted in the stomp windups before jumping (0 waste with a jump on frame 2)
+Efficiency: (jump cancel count * 2 / frames spent stomping) * 100%
+
+Chain Charge Dashes: number of charge dashes that followed a stomp cancel and jump
+Excess: total number of extra frames wasted in jumps before starting the next cdash
+Efficiency: (chain charge dash count / frames spent jumping) * 100%
+
 The base dll for this mod is the nopause dll with menu commands, 50 slots, and a 0.5 bash deadzone.
 
 Modified classes:
+BashAttackGame
 GameController
 NewGameAction
+SeinDashAttack
+SeinDoubleJump
+SeinStomp
 
 Added classes:
 PracticeManager

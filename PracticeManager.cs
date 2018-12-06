@@ -37,6 +37,26 @@ public static class PracticeManager
 		{
 			Characters.Sein.Mortality.DamageReciever.IsImmortal = false;
 		}
+		PracticeManager.ResetStats();
+	}
+
+	public static void ResetStats()
+	{
+		PracticeManager.BashStartFrame = -100;
+		PracticeManager.BashFrames = 0;
+		PracticeManager.BashCount = 0;
+		PracticeManager.ChargeDashStartFrame = -100;
+		PracticeManager.StompStartFrame = -100;
+		PracticeManager.JumpStartFrame = -100;
+		PracticeManager.StompCancelCount = 0;
+		PracticeManager.LateCancelCount = 0;
+		PracticeManager.JumpCancelCount = 0;
+		PracticeManager.EarlyJumps = 0;
+		PracticeManager.ChainChargeDashCount = 0;
+		PracticeManager.ChargeDashDuration = 0;
+		PracticeManager.ChargeDashEfficiency = 0f;
+		PracticeManager.StompDuration = 0;
+		PracticeManager.JumpDuration = 0;
 	}
 
 	public static void WriteFile()
@@ -147,6 +167,10 @@ public static class PracticeManager
 			{
 				PracticeManager.MessageInQueue = 2;
 			}
+			if(MoonInput.GetKeyDown(KeyCode.E))
+			{
+				PracticeManager.ShowMessage(PracticeManager.GenerateEfficiencyStats());
+			}
 			if(MoonInput.GetKeyDown(KeyCode.Keypad1))
 			{
 				PracticeManager.SetEnd(1);
@@ -255,6 +279,7 @@ public static class PracticeManager
 		}
 		PracticeManager.ShowMessage("Ready...", 5f);
 		PracticeManager.Countdown = 60;
+		PracticeManager.ResetStats();
 	}
 
 	public static void Start()
@@ -398,6 +423,112 @@ public static class PracticeManager
 
 	}
 
+	public static void OnBashStart()
+	{
+		PracticeManager.BashStartFrame = PracticeManager.FrameCount;
+	}
+
+	public static void OnBashFinished()
+	{
+		if(PracticeManager.Running)
+		{
+			PracticeManager.BashCount += 1;
+			PracticeManager.BashFrames += PracticeManager.FrameCount - PracticeManager.BashStartFrame;
+		}
+	}
+
+	public static void OnChargeDashStart()
+	{
+		PracticeManager.ChargeDashStartFrame = PracticeManager.FrameCount;
+		if(PracticeManager.Running)
+		{
+			int jumpLength = PracticeManager.FrameCount - PracticeManager.JumpStartFrame;
+			if(jumpLength < 24)
+			{
+				PracticeManager.ChainChargeDashCount += 1;
+				PracticeManager.JumpDuration += jumpLength;
+			}
+		}
+	}
+
+	public static void OnStomp()
+	{
+		if(PracticeManager.Running)
+		{
+			int cdashLength = PracticeManager.FrameCount - PracticeManager.ChargeDashStartFrame;
+			if(cdashLength < 24)
+			{
+				PracticeManager.StompStartFrame = PracticeManager.FrameCount;
+				if(cdashLength <= 12)
+				{
+					PracticeManager.StompCancelCount += 1;
+					PracticeManager.ChargeDashDuration += cdashLength;
+					PracticeManager.ChargeDashEfficiency += PracticeManager.ChargeDashEfficiencyTable[cdashLength-1];
+				}
+				else
+				{
+					PracticeManager.LateCancelCount += 1;
+				}
+			}
+		}
+	}
+
+	public static void OnJump()
+	{
+		if(PracticeManager.Running)
+		{
+			int stompLength = PracticeManager.FrameCount - PracticeManager.StompStartFrame;
+			if(stompLength < 24)
+			{
+				if(stompLength == 1)
+				{
+					PracticeManager.EarlyJumps += 1;
+				}
+				else
+				{
+					PracticeManager.JumpStartFrame = PracticeManager.FrameCount;
+					PracticeManager.JumpCancelCount += 1;
+					PracticeManager.StompDuration += stompLength;
+				}
+			}
+		}
+	}
+
+	public static string GenerateEfficiencyStats()
+	{
+		string stats = "Bashes: " + PracticeManager.BashCount.ToString() +
+					   "    Excess: " + (PracticeManager.BashFrames - PracticeManager.BashCount * 20).ToString();
+		if(PracticeManager.BashFrames > 0)
+		{
+			stats += "    Efficiency: " + ((PracticeManager.BashCount * 2000) / PracticeManager.BashFrames).ToString() + "%";
+		}
+
+		stats += "\nStomp Cancels: " + PracticeManager.StompCancelCount.ToString();
+		stats += "    Late: " + PracticeManager.LateCancelCount.ToString();
+		if(PracticeManager.StompCancelCount > 0)
+		{
+			stats += "    Average: " + (((float)(100 * PracticeManager.ChargeDashDuration / PracticeManager.StompCancelCount)) / 100f).ToString() +
+					 "    Efficiency: " + ((int)(100 * PracticeManager.ChargeDashEfficiency) / PracticeManager.StompCancelCount).ToString() + "%";
+		}
+
+		stats += "\nJump Cancels: " + PracticeManager.JumpCancelCount.ToString() + 
+				 "    Early: " + PracticeManager.EarlyJumps.ToString() + 
+				 "    Excess: " + (PracticeManager.StompDuration - PracticeManager.JumpCancelCount * 2).ToString();
+		if(PracticeManager.StompDuration > 0)
+		{
+			stats += "   Efficiency: " + ((PracticeManager.JumpCancelCount * 200) / PracticeManager.StompDuration).ToString() + "%";
+		}
+
+		stats += "\nChain Charge Dashes: " + PracticeManager.ChainChargeDashCount.ToString() +
+				 "    Excess: " + (PracticeManager.JumpDuration - PracticeManager.ChainChargeDashCount).ToString();
+		if(PracticeManager.JumpDuration > 0)
+		{
+			stats += "    Efficiency: " + (PracticeManager.ChainChargeDashCount * 100 / PracticeManager.JumpDuration).ToString() + "%";
+		}
+
+		return stats;
+	}
+
 	public static PracticeMessageProvider MessageProvider;
 
 	public static float MessageTime;
@@ -435,4 +566,37 @@ public static class PracticeManager
 	public static int DroppedFrames;
 
 	public static long MaxDelta;
+
+	public static int BashStartFrame;
+
+	public static int BashFrames;
+
+	public static int BashCount;
+
+	public static int ChargeDashStartFrame;
+
+	public static int StompStartFrame;
+
+	public static int JumpStartFrame;
+
+	public static int StompCancelCount;
+
+	public static int LateCancelCount;
+
+	public static int JumpCancelCount;
+
+	public static int EarlyJumps;
+
+	public static int ChainChargeDashCount;
+
+	public static int ChargeDashDuration;
+
+	public static float ChargeDashEfficiency;
+
+	public static int StompDuration;
+
+	public static int JumpDuration;
+
+	public static float[] ChargeDashEfficiencyTable = new float[]{0.09179272102f, 0.1831833899f, 0.2741123414f, 0.3644428044f, 0.4539572301f, 0.5423609639f, 0.6292794914f, 0.7142611925f, 0.7967745874f, 0.8762101723f, 0.9485584412f, 1f};
+
 }
