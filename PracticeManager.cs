@@ -302,6 +302,7 @@ public static class PracticeManager
 		PracticeManager.ExtraFrames = 0;
 		PracticeManager.LagFrames = 0;
 		PracticeManager.MaxDelta = 0L;
+		PracticeManager.DroppedFrames = 0;
 	}
 
 	public static void End()
