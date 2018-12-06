@@ -444,6 +444,7 @@ public static class PracticeManager
 		if(PracticeManager.Running)
 		{
 			int jumpLength = PracticeManager.FrameCount - PracticeManager.JumpStartFrame;
+			PracticeManager.JumpStartFrame = -100;
 			if(jumpLength < 24)
 			{
 				PracticeManager.ChainChargeDashCount += 1;
@@ -457,6 +458,7 @@ public static class PracticeManager
 		if(PracticeManager.Running)
 		{
 			int cdashLength = PracticeManager.FrameCount - PracticeManager.ChargeDashStartFrame;
+			PracticeManager.ChargeDashStartFrame = -100;
 			if(cdashLength < 24)
 			{
 				PracticeManager.StompStartFrame = PracticeManager.FrameCount;
@@ -479,6 +481,7 @@ public static class PracticeManager
 		if(PracticeManager.Running)
 		{
 			int stompLength = PracticeManager.FrameCount - PracticeManager.StompStartFrame;
+			PracticeManager.StompStartFrame = -100;
 			if(stompLength < 24)
 			{
 				if(stompLength == 1)
