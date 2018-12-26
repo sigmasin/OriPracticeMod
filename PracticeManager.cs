@@ -147,7 +147,7 @@ public static class PracticeManager
 		}
 		if(MoonInput.GetKey(KeyCode.LeftAlt) || MoonInput.GetKey(KeyCode.RightAlt))
 		{
-			if(MoonInput.GetKeyDown(KeyCode.Keypad5))
+			if(MoonInput.GetKeyDown(KeyCode.Keypad5) || MoonInput.GetKeyDown(KeyCode.Semicolon))
 			{
 				PracticeManager.SetStart();
 			}
@@ -155,7 +155,7 @@ public static class PracticeManager
 			{
 				PracticeManager.QueueStart();
 			}
-			if(MoonInput.GetKeyDown(KeyCode.L))
+			if(MoonInput.GetKeyDown(KeyCode.K))
 			{
 				PracticeManager.Initialize();
 			}
@@ -171,35 +171,35 @@ public static class PracticeManager
 			{
 				PracticeManager.ShowMessage(PracticeManager.GenerateEfficiencyStats());
 			}
-			if(MoonInput.GetKeyDown(KeyCode.Keypad1))
+			if(MoonInput.GetKeyDown(KeyCode.Keypad1) || MoonInput.GetKeyDown(KeyCode.Comma))
 			{
 				PracticeManager.SetEnd(1);
 			}
-			if(MoonInput.GetKeyDown(KeyCode.Keypad2))
+			if(MoonInput.GetKeyDown(KeyCode.Keypad2) || MoonInput.GetKeyDown(KeyCode.Period))
 			{
 				PracticeManager.SetEnd(2);
 			}
-			if(MoonInput.GetKeyDown(KeyCode.Keypad3))
+			if(MoonInput.GetKeyDown(KeyCode.Keypad3) || MoonInput.GetKeyDown(KeyCode.Slash))
 			{
 				PracticeManager.SetEnd(3);
 			}
-			if(MoonInput.GetKeyDown(KeyCode.Keypad4))
+			if(MoonInput.GetKeyDown(KeyCode.Keypad4) || MoonInput.GetKeyDown(KeyCode.L))
 			{
 				PracticeManager.SetEnd(4);
 			}
-			if(MoonInput.GetKeyDown(KeyCode.Keypad6))
+			if(MoonInput.GetKeyDown(KeyCode.Keypad6) || MoonInput.GetKeyDown(KeyCode.Quote))
 			{
 				PracticeManager.SetEnd(6);
 			}
-			if(MoonInput.GetKeyDown(KeyCode.Keypad7))
+			if(MoonInput.GetKeyDown(KeyCode.Keypad7) || MoonInput.GetKeyDown(KeyCode.P))
 			{
 				PracticeManager.SetEnd(7);
 			}
-			if(MoonInput.GetKeyDown(KeyCode.Keypad8))
+			if(MoonInput.GetKeyDown(KeyCode.Keypad8) || MoonInput.GetKeyDown(KeyCode.LeftBracket))
 			{
 				PracticeManager.SetEnd(8);
 			}
-			if(MoonInput.GetKeyDown(KeyCode.Keypad9))
+			if(MoonInput.GetKeyDown(KeyCode.Keypad9) || MoonInput.GetKeyDown(KeyCode.RightBracket))
 			{
 				PracticeManager.SetEnd(9);
 			}

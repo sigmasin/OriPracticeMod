@@ -4,18 +4,18 @@ Here is a demo of some features: https://streamable.com/j6r67
 
 Full command list:
 
-Alt+Numpad5: Set start point (current Ori position)
-Alt+Numpad1: Set end area (down-left of current Ori position)
-Alt+Numpad2: Set end area (down)
-Alt+Numpad3: Set end area (down-right)
-Alt+Numpad4: Set end area (left)
-Alt+Numpad6: Set end area (right)
-Alt+Numpad7: Set end area (up-left)
-Alt+Numpad8: Set end area (up)
-Alt+Numpad9: Set end area (up-right)
+Alt+(Numpad5 or ;): Set start point (current Ori position)
+Alt+(Numpad1 or ,): Set end area (down-left of current Ori position)
+Alt+(Numpad2 or .): Set end area (down)
+Alt+(Numpad3 or /): Set end area (down-right)
+Alt+(Numpad4 or L): Set end area (left)
+Alt+(Numpad6 or '): Set end area (right)
+Alt+(Numpad7 or P): Set end area (up-left)
+Alt+(Numpad8 or [): Set end area (up)
+Alt+(Numpad9 or ]): Set end area (up-right)
 
 Alt+R: Start the run
-Alt+L: Reload PracticeSession.txt
+Alt+K: Reload PracticeSession.txt
 Alt+I: Show current position, start point, end point, and end direction
 Alt+T: Replay last message
 Alt+E: Display bash and charge dash efficiency stats
